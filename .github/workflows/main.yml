@@ -1,0 +1,32 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Initialization Environment
+        run: |
+          echo $CUSTOM_VERSION
+          git branch -v
+          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/share/man
+          sudo -E apt-get -qq update
+          sudo -E apt-get install gcc make git unzip wget xz-utils bc gperf zip unzip g++  build-essential patchutils lzop xfonts-utils xsltproc libjson-perl cmake texinfo default-jre libncurses5-dev file zstd libparse-yapp-perl libxml-parser-perl
+          sudo -E apt-get -qq autoremove --purge
+
+      - name: Run build
+        run: AUTOREMOVE=yes MTPROGRESS=yes make image
+      
